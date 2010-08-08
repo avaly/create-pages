@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Create Pages
-Plugin URI: http://agachi.name/#create-pages
+Plugin URI: http://github.com/avaly/create-pages
 Description: Create pages automatically
 Version: 1.0
 Author: Valentin Agachi
