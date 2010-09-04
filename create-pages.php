@@ -3,7 +3,7 @@
 Plugin Name: Create Pages
 Plugin URI: http://github.com/avaly/create-pages
 Description: Create pages automatically
-Version: 1.0
+Version: 1.1
 Author: Valentin Agachi
 Author URI: http://agachi.name
 License: GPL2
@@ -25,6 +25,7 @@ function cp_plugin_action_links($data)
 	return $data;
 }
 add_filter('plugin_action_links_'.basename(__FILE__), 'cp_plugin_action_links');
+
 
 
 function cp_create()
@@ -60,6 +61,10 @@ function cp_create()
 					<td><label><input type="checkbox" name="clean" value="1" id="clean"/> Remove all pages before creating new pages</label></td>
 				</tr>
 				<tr>
+					<th>Insert dummy content</th>
+					<td><label><input type="checkbox" name="dummy" value="1" checked="checked" id="dummy"/> Insert dummy content for all created pages</label></td>
+				</tr>
+				<tr>
 					<th>List of pages to create</th>
 					<td>
 						<textarea name="items" id="items" rows="20" cols="60"></textarea>
@@ -82,6 +87,8 @@ Page #4 {"key1":"value1","key2":"value2"}</pre>
 			<p class="submit"><input type="submit" class="button-primary" value="Create Pages"/></p>
 		</form>
 
+		<p class="created" style="text-align:right"><em>Created by <a href="http://agachi.name/">Valentin Agachi</a></em></p>
+
 	</div>
 <?php
 }
@@ -90,7 +97,7 @@ Page #4 {"key1":"value1","key2":"value2"}</pre>
 
 function cp_perform()
 {
-	global $user_ID;
+	global $user_ID, $dummyContent;
 
 	if (!is_array($_POST) || !count($_POST))
 		return false;
@@ -160,6 +167,10 @@ function cp_perform()
 			'post_date' => date('Y-m-d H:i:s'),
 			'post_title' => $match[2],
 		);
+		if ($_POST['dummy'])
+		{
+			$params['post_content'] = $dummyContent;
+		}
 		$last = wp_insert_post($params);
 		
 		// post inserted
@@ -177,6 +188,7 @@ function cp_perform()
 						add_post_meta($last, $k, $v);
 					}
 			}
+
 		}
 	}
 
@@ -184,3 +196,26 @@ function cp_perform()
 }
 
 
+
+$dummyContent = <<<'ELOREM'
+
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue euismod sem, eu congue odio pellentesque egestas. Nam vitae consectetur ante. Morbi et enim non est facilisis dignissim. Aenean vel dui tortor, in facilisis lorem. Phasellus neque neque, semper congue iaculis eu, ullamcorper et leo. Sed rhoncus posuere dui. Fusce in purus metus. Nullam fringilla metus quis magna tristique aliquet. <a href="#">Phasellus euismod</a> nunc dignissim mi eleifend ac bibendum ante tincidunt. Aenean quam purus, commodo vitae dapibus et, adipiscing in libero. Quisque sapien mi, faucibus at consequat vitae, auctor accumsan lacus. Donec et elit dui, in bibendum ipsum. Nunc libero est, egestas sit amet condimentum pulvinar, mattis quis enim.</p>
+<ul>
+	<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+	<li><a href="#">Phasellus</a> id arcu quis odio egestas semper.</li>
+	<li>Nulla ac nibh ac risus viverra facilisis.</li>
+</ul>
+<p>In pulvinar ligula eu libero tempus facilisis sit amet adipiscing magna. Fusce interdum, nibh non accumsan tristique, nisi lectus feugiat orci, sit amet tempus lacus justo mattis libero. Aliquam ut diam ac turpis faucibus pretium non in est. Phasellus libero nunc, ullamcorper sed tincidunt ut, bibendum sit amet purus. Pellentesque tempus urna eu nibh ornare dignissim vel eu turpis. Aliquam a nibh sit amet sem feugiat porta eu at magna. Morbi auctor felis id dui rhoncus non commodo turpis commodo. Phasellus sed neque erat, eget bibendum nibh. Phasellus vestibulum fringilla arcu vel adipiscing. Suspendisse euismod sollicitudin erat eu adipiscing. Nullam dolor nunc, aliquet vitae aliquam a, lacinia nec lorem. Nullam at magna ipsum, id accumsan libero. Nunc arcu metus, elementum vitae tempor nec, vulputate eu ligula.</p>
+<ol>
+	<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+	<li><a href="#">Phasellus </a>id arcu quis odio egestas semper.</li>
+	<li>Nulla ac nibh ac risus viverra facilisis.</li>
+</ol>
+<p>Morbi imperdiet suscipit orci, non gravida lorem aliquam id. Suspendisse id eros eu neque molestie adipiscing sed vel augue. Etiam id diam nisl. Suspendisse elementum dapibus massa, eget vulputate velit elementum et. Vivamus metus nisi, mattis vel elementum ac, volutpat in mi. Sed sagittis nulla quis velit viverra imperdiet. Suspendisse in mi nisi. Mauris nisi massa, ullamcorper eu gravida vitae, imperdiet nec felis. Sed vitae lorem urna. Nunc at placerat turpis. Etiam porttitor mi convallis diam euismod auctor.</p>
+
+ELOREM;
+
+
+
+
+// no php end tag
