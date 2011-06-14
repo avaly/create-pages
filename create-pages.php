@@ -3,7 +3,7 @@
 Plugin Name: Create Items & Taxonomies
 Plugin URI: http://github.com/avaly/create-pages
 Description: Create pages, posts, custom post items & taxonomies automatically
-Version: 1.2
+Version: 1.2.1
 Author: Valentin Agachi
 Author URI: http://agachi.name
 Contributors: Valentin Ceaprazaru
@@ -77,6 +77,10 @@ function cp_create()
 					<td><label><input type="checkbox" name="clean" value="1" id="clean"/> Remove all items before creating new items</label></td>
 				</tr>
 				<tr>
+					<th><label for="parent">Parent</label></th>
+					<td><input type="text" name="parent" id="parent" value="0" size="5"/></td>
+				</tr>
+				<tr>
 					<th><label for="menu_order">Menu_order start</label></th>
 					<td><input type="text" name="menu_order" id="menu_order" value="1" size="5"/></td>
 				</tr>
@@ -141,7 +145,7 @@ function cp_perform()
 	$_POST['items'] = stripslashes($_POST['items']);
 	$items = explode("\n", str_replace("\r", '', $_POST['items']));
 
-	$parents = array(0);
+	$parents = array($_POST['parent']);
 	$orders = array($_POST['menu_order']);
 	$level = 0;
 	$last = 0;
