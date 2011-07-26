@@ -3,7 +3,7 @@
 Plugin Name: Create Items & Taxonomies
 Plugin URI: http://github.com/avaly/create-pages
 Description: Create pages, posts, custom post items & taxonomies automatically
-Version: 1.2.1
+Version: 1.3
 Author: Valentin Agachi
 Author URI: http://agachi.name
 Contributors: Valentin Ceaprazaru
@@ -103,7 +103,8 @@ Item #2
 	Item #2.1
 	Item #2.2
 Item #3
-Item #4 {"key1":"value1","key2":"value2"}</pre>
+Item #4 {"key1":"value1","key2":"value2"}
+Item #5 {"taxonomy1":[termID1],"taxonomy2":[termID2,termID3]}</pre>
 					</td>
 				</tr>
 			</tbody>
@@ -195,6 +196,7 @@ function cp_perform()
 		{
 			$params['post_content'] = $dummyContent;
 		}
+
 		$last = wp_insert_post($params);
 		
 		// post inserted
@@ -209,7 +211,15 @@ function cp_perform()
 				if (is_array($fields))
 					foreach ($fields as $k => $v)
 					{
-						add_post_meta($last, $k, $v);
+						$tax = get_taxonomy($k);
+						if (is_object($tax) && !empty($tax->name) && is_array($v))
+						{
+							wp_set_object_terms($last, $v, $tax->name);
+						}
+						else
+						{
+							add_post_meta($last, $k, $v);
+						}
 					}
 			}
 
@@ -296,8 +306,12 @@ function ct_create()
 					<td><label><input type="checkbox" name="clean" value="1" id="clean"/> Remove all terms before creating new terms</label></td>
 				</tr>
 				<tr>
+					<th><label for="parent">Parent</label></th>
+					<td><input type="text" name="parent" id="parent" value="0" size="5"/></td>
+				</tr>
+				<tr>
 					<th>Insert dummy description</th>
-					<td><label><input type="checkbox" name="dummy" value="1" checked="checked" id="dummy"/> Insert dummy description for all created terms</label></td>
+					<td><label><input type="checkbox" name="dummy" value="1" id="dummy"/> Insert dummy description for all created terms</label></td>
 				</tr>
 				<tr>
 					<th><label for="items">List of terms to create</label></th>
@@ -356,7 +370,7 @@ function ct_perform()
 	$_POST['items'] = stripslashes($_POST['items']);
 	$items = explode("\n", str_replace("\r", '', $_POST['items']));
 
-	$parents = array(0);
+	$parents = array($_POST['parent']);
 	$level = 0;
 	$last = 0;
 
