@@ -3,7 +3,7 @@
 Plugin Name: Create Items & Taxonomies
 Plugin URI: http://github.com/avaly/create-pages
 Description: Create pages, posts, custom post items & taxonomies automatically
-Version: 1.3
+Version: 1.3.1
 Author: Valentin Agachi
 Author URI: http://agachi.name
 Contributors: Valentin Ceaprazaru
@@ -198,7 +198,7 @@ function cp_perform()
 		}
 
 		$last = wp_insert_post($params);
-		
+
 		// post inserted
 		if ($last)
 		{
@@ -223,6 +223,7 @@ function cp_perform()
 					}
 			}
 
+			sleep(1);
 		}
 	}
 
@@ -350,7 +351,7 @@ function ct_perform()
 		return false;
 
 	$result = array('deleted' => 0, 'created' => 0, 'errors' => array());
-	
+
 	if ($_POST['clean'])
 	{
 		$items = get_terms($_POST['tax'], array('hide_empty' => false));
@@ -417,7 +418,7 @@ function ct_perform()
 		{
 			$last = $last['term_id'];
 			$result['created']++;
-		}		
+		}
 	}
 
 	return $result;
@@ -425,7 +426,7 @@ function ct_perform()
 
 $dummyDescription = <<<ELOREM
 
-Morbi imperdiet suscipit orci, non gravida lorem aliquam id. Suspendisse id eros eu neque molestie adipiscing sed vel augue. Etiam id diam nisl. Suspendisse elementum dapibus massa, eget vulputate velit elementum et. 
+Morbi imperdiet suscipit orci, non gravida lorem aliquam id. Suspendisse id eros eu neque molestie adipiscing sed vel augue. Etiam id diam nisl. Suspendisse elementum dapibus massa, eget vulputate velit elementum et.
 
 ELOREM;
 
